@@ -24,14 +24,16 @@ public final class SortedMapCollectionMapper extends MapCollectionMapper<SortedM
 			CommonCollectionMapperData commonCollectionMapperData,
 			Class<? extends SortedMap> collectionClass, Class<? extends SortedMap> proxyClass,
 			MiddleComponentData elementComponentData, MiddleComponentData indexComponentData, Comparator comparator,
-			boolean revisionTypeInId) {
+			boolean revisionTypeInId,
+			boolean lazy) {
 		super(
 				commonCollectionMapperData,
 				collectionClass,
 				proxyClass,
 				elementComponentData,
 				indexComponentData,
-				revisionTypeInId
+				revisionTypeInId,
+				lazy
 		);
 		this.comparator = comparator;
 	}

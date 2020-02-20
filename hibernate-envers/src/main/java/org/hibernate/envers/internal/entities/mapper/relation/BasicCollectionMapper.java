@@ -39,8 +39,9 @@ public class BasicCollectionMapper<T extends Collection> extends AbstractCollect
 			Class<? extends T> proxyClass,
 			MiddleComponentData elementComponentData,
 			boolean ordinalInId,
-			boolean revisionTypeInId) {
-		super( commonCollectionMapperData, collectionClass, proxyClass, ordinalInId, revisionTypeInId );
+			boolean revisionTypeInId,
+			boolean lazy) {
+		super( commonCollectionMapperData, collectionClass, proxyClass, ordinalInId, revisionTypeInId, lazy );
 		this.elementComponentData = elementComponentData;
 	}
 

@@ -43,6 +43,7 @@ public abstract class AbstractCollectionMapper<T> extends AbstractPropertyMapper
 	protected final Class<? extends T> collectionClass;
 	protected final boolean ordinalInId;
 	protected final boolean revisionTypeInId;
+	private final boolean lazy;
 
 	private final Constructor<? extends T> proxyConstructor;
 
@@ -51,11 +52,13 @@ public abstract class AbstractCollectionMapper<T> extends AbstractPropertyMapper
 			Class<? extends T> collectionClass,
 			Class<? extends T> proxyClass,
 			boolean ordinalInId,
-			boolean revisionTypeInId) {
+			boolean revisionTypeInId,
+			boolean lazy) {
 		this.commonCollectionMapperData = commonCollectionMapperData;
 		this.collectionClass = collectionClass;
 		this.ordinalInId = ordinalInId;
 		this.revisionTypeInId = revisionTypeInId;
+		this.lazy = lazy;
 
 		try {
 			proxyConstructor = proxyClass.getConstructor( Initializor.class );
@@ -280,18 +283,15 @@ public abstract class AbstractCollectionMapper<T> extends AbstractPropertyMapper
 			final Number revision) {
 		final String revisionTypePropertyName = enversService.getAuditEntitiesConfiguration().getRevisionTypePropName();
 
-		// construct the collection proxy
-		final Object collectionProxy;
+		// construct value or collection proxy depending on lazy flag
+		final Object value;
+		Initializor<T> initializor =
+			getInitializor(enversService, versionsReader, primaryKey, revision,
+				RevisionType.DEL.equals(data.get(revisionTypePropertyName)));
 		try {
-			collectionProxy = proxyConstructor.newInstance(
-					getInitializor(
-							enversService,
-							versionsReader,
-							primaryKey,
-							revision,
-							RevisionType.DEL.equals( data.get( revisionTypePropertyName ) )
-					)
-			);
+			value = lazy
+				? proxyConstructor.newInstance(initializor)
+				: initializor.initialize();
 		}
 		catch ( Exception e ) {
 			throw new AuditException( "Failed to construct collection proxy", e );
@@ -301,7 +301,7 @@ public abstract class AbstractCollectionMapper<T> extends AbstractPropertyMapper
 
 		if ( isDynamicComponentMap() ) {
 			final Map<String, Object> map = (Map<String, Object>) obj;
-			map.put( collectionPropertyData.getBeanName(), collectionProxy );
+			map.put( collectionPropertyData.getBeanName(), value );
 		}
 		else {
 			AccessController.doPrivileged(
@@ -314,7 +314,7 @@ public abstract class AbstractCollectionMapper<T> extends AbstractPropertyMapper
 									enversService.getServiceRegistry()
 							);
 
-							setter.set( obj, collectionProxy, null );
+							setter.set( obj, value, null );
 
 							return null;
 						}

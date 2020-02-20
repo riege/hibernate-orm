@@ -740,7 +740,8 @@ public final class CollectionMetadataGenerator {
 							elementComponentData,
 							propertyValue.getComparator(),
 							embeddableElementType,
-							embeddableElementType
+							embeddableElementType,
+							propertyValue.isLazy()
 					)
 			);
 		}
@@ -753,7 +754,8 @@ public final class CollectionMetadataGenerator {
 							SetProxy.class,
 							elementComponentData,
 							embeddableElementType,
-							embeddableElementType
+							embeddableElementType,
+							propertyValue.isLazy()
 					)
 			);
 		}
@@ -768,7 +770,8 @@ public final class CollectionMetadataGenerator {
 							elementComponentData,
 							indexComponentData,
 							propertyValue.getComparator(),
-							embeddableElementType || lobMapElementType
+							embeddableElementType || lobMapElementType,
+							propertyValue.isLazy()
 					)
 			);
 		}
@@ -782,7 +785,8 @@ public final class CollectionMetadataGenerator {
 							MapProxy.class,
 							elementComponentData,
 							indexComponentData,
-							embeddableElementType || lobMapElementType
+							embeddableElementType || lobMapElementType,
+							propertyValue.isLazy()
 					)
 			);
 		}
@@ -795,7 +799,8 @@ public final class CollectionMetadataGenerator {
 							ListProxy.class,
 							elementComponentData,
 							embeddableElementType,
-							embeddableElementType
+							embeddableElementType,
+							propertyValue.isLazy()
 					)
 			);
 		}
@@ -807,7 +812,8 @@ public final class CollectionMetadataGenerator {
 							commonCollectionMapperData,
 							elementComponentData,
 							indexComponentData,
-							embeddableElementType
+							embeddableElementType,
+							propertyValue.isLazy()
 					)
 			);
 		}
